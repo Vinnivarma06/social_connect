@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SocialConnect - Modern Social Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .social-gradient { background: linear-gradient(45deg, #6366f1 0%, #a855f7 50%, #ec4899 100%); }
+        .story-ring { background: linear-gradient(45deg, #6366f1 0%, #a855f7 50%, #ec4899 100%); }
+        .post-card { transition: all 0.2s ease; }
+        .like-btn.liked { animation: likeAnimation 0.3s ease; }
+        @keyframes likeAnimation {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        .notification { animation: slideIn 0.3s ease; }
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        .auth-container { background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%); }
+        .auth-card { animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <!-- Authentication Screen -->
+    <div id="authScreen" class="min-h-screen auth-container flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-xl w-full max-w-lg overflow-hidden auth-card">
+            <div class="grid grid-cols-1 md:grid-cols-2">
+                <!-- Welcome Side -->
+                <div class="hidden md:block p-8 bg-gradient-to-br from-indigo-500 to-purple-600 text-white">
+                    <div class="h-full flex flex-col justify-center">
+                        <h1 class="text-4xl font-bold mb-4">Welcome to SocialConnect</h1>
+                        <p class="text-lg opacity-90 mb-6">Join millions of people sharing their stories, ideas, and moments.</p>
+                        <div class="space-y-4">
+                            <div class="flex items-center space-x-3">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                                </svg>
+                                <span>Connect with friends</span>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                                </svg>
+                                <span>Share your moments</span>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                </svg>
+                                <span>Discover new ideas</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Form Side -->
+                <div class="p-8">
+                    <!-- Login Form -->
+                    <div id="loginForm">
+                        <div class="text-center mb-6">
+                            <div class="social-gradient w-12 h-12 rounded-full mx-auto mb-3 flex items-center justify-center">
+                                <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                                </svg>
+                            </div>
+                            <h2 class="text-2xl font-bold text-gray-800">Log In</h2>
+                        </div>
+
+                        <form id="loginFormElement" class="space-y-4">
+                            <div>
+                                <input type="text" id="loginUsername" placeholder="Username or Email" 
+                                       class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                            </div>
+                            <div>
+                                <input type="password" id="loginPassword" placeholder="Password" 
+                                       class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                            </div>
+                            <button type="submit" class="w-full social-gradient text-white py-3 rounded-xl font-semibold hover:opacity-90 transition-opacity">
+                                Log In
+                            </button>
+                        </form>
+
+                        <div class="mt-4 text-center">
+                            <p class="text-gray-600 text-sm">Don't have an account? 
+                                <button id="showSignup" class="text-indigo-600 font-semibold hover:underline">Sign up</button>
+                            </p>
+                        </div>
+
+                        <div class="mt-6 pt-6 border-t border-gray-200">
+                            <p class="text-sm text-gray-500 text-center mb-4">Demo Accounts:</p>
+                            <div class="space-y-2 text-xs text-gray-600">
+                                <div class="flex justify-between">
+                                 s
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Signup Form -->
+                    <div id="signupForm" class="hidden">
+                        <div class="text-center mb-6">
+                            <div class="social-gradient w-12 h-12 rounded-full mx-auto mb-3 flex items-center justify-center">
+                                <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                                </svg>
+                            </div>
+                            <h2 class="text-2xl font-bold text-gray-800">Sign Up</h2>
+                        </div>
+
+                        <form id="signupFormElement" class="space-y-4">
+                            <div>
+                                <input type="text" id="signupFullName" placeholder="Full Name" 
+                                       class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                            </div>
+                            <div>
+                                <input type="text" id="signupUsername" placeholder="Username" 
+                                       class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                            </div>
+                            <div>
+                                <input type="email" id="signupEmail" placeholder="Email" 
+                                       class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                            </div>
+                            <div>
+                                <input type="password" id="signupPassword" placeholder="Password" 
+                                       class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                            </div>
+                            <button type="submit" class="w-full social-gradient text-white py-3 rounded-xl font-semibold hover:opacity-90 transition-opacity">
+                                Sign Up
+                            </button>
+                        </form>
+
+                        <div class="mt-4 text-center">
+                            <p class="text-gray-600 text-sm">Already have an account? 
+                                <button id="showLogin" class="text-indigo-600 font-semibold hover:underline">Log in</button>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="mainApp" class="hidden">
+        <!-- Navigation -->
+        <nav class="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
+            <div class="max-w-7xl mx-auto px-4 py-3">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-6">
+                        <h1 class="text-2xl font-bold social-gradient bg-clip-text text-transparent">SocialConnect</h1>
+                        <div class="relative hidden md:block">
+                            <input type="text" placeholder="Search people, posts..." 
+                                   class="pl-10 pr-4 py-2 bg-gray-100 border-0 rounded-full w-80 focus:outline-none focus:ring-2 focus:ring-indigo-300"
+                                   id="searchInput">
+                            <svg class="w-4 h-4 text-gray-500 absolute left-3 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-6">
+                        <button class="p-2 hover:bg-gray-100 rounded-full transition-colors">
+                            <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0h-2"></path>
+                            </svg>
+                        </button>
+                        <button class="p-2 hover:bg-gray-100 rounded-full transition-colors">
+                            <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
+                            </svg>
+                        </button>
+                        <button class="p-2 hover:bg-gray-100 rounded-full relative transition-colors" id="notificationBtn">
+                            <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                            </svg>
+                            <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">3</span>
+                        </button>
+                        <div class="flex items-center space-x-3 cursor-pointer group" id="currentUserProfile" onclick="showProfile(currentUser.id)">
+                            <img id="currentUserAvatar" src="" alt="Profile" class="w-8 h-8 rounded-full ring-2 ring-transparent group-hover:ring-indigo-300 transition-all">
+                            <span id="currentUserName" class="font-medium text-gray-700 hidden md:block"></span>
+                        </div>
+                        <button onclick="logout()" class="text-gray-500 hover:text-indigo-600 text-sm font-medium transition-colors">Logout</button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Profile Modal -->
+        <div id="profileModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+                <div class="p-6 border-b relative">
+                    <h2 class="text-2xl font-bold text-center">Profile</h2>
+                    <button onclick="closeProfile()" class="absolute right-6 top-6 text-gray-500 hover:text-gray-700">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                <div class="p-8">
+                    <div class="flex flex-col md:flex-row items-center md:items-start space-y-6 md:space-y-0 md:space-x-8">
+                        <div class="flex-shrink-0">
+                            <img id="profileAvatar" src="" alt="Profile" class="w-32 h-32 rounded-full border-4 border-white shadow-lg">
+                        </div>
+                        <div class="flex-1 text-center md:text-left">
+                            <h3 id="profileName" class="text-3xl font-bold"></h3>
+                            <p id="profileHandle" class="text-gray-600 text-lg mt-1"></p>
+                            <p id="profileBio" class="text-gray-700 mt-4"></p>
+                            <div class="grid grid-cols-3 gap-4 mt-6">
+                                <div class="bg-gray-50 p-4 rounded-xl">
+                                    <div class="text-2xl font-bold" id="profilePosts">0</div>
+                                    <div class="text-gray-500">Posts</div>
+                                </div>
+                                <div class="bg-gray-50 p-4 rounded-xl">
+                                    <div class="text-2xl font-bold" id="profileFollowers">0</div>
+                                    <div class="text-gray-500">Followers</div>
+                                </div>
+                                <div class="bg-gray-50 p-4 rounded-xl">
+                                    <div class="text-2xl font-bold" id="profileFollowing">0</div>
+                                    <div class="text-gray-500">Following</div>
+                                </div>
+                            </div>
+                        </div>
+                        <button id="profileFollowBtn" class="px-6 py-3 social-gradient text-white rounded-xl font-semibold hover:opacity-90 transition-opacity hidden">
+                            Follow
+                        </button>
+                    </div>
+                    <div class="mt-12">
+                        <h4 class="text-xl font-bold mb-4">Posts</h4>
+                        <div id="profilePostsContainer" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <!-- Profile posts will be rendered here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 py-6">
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                <!-- Left Sidebar (Profile) -->
+                <div class="hidden lg:block lg:col-span-1">
+                    <div class="bg-white rounded-2xl border border-gray-200 p-6 sticky top-24 shadow-sm">
+                        <div class="text-center">
+                            <img id="profileCardAvatar" src="" alt="Profile" class="w-20 h-20 rounded-full mx-auto mb-4 border-2 border-indigo-100">
+                            <h3 id="profileCardName" class="font-bold text-lg"></h3>
+                            <p id="profileCardHandle" class="text-gray-600 text-sm"></p>
+                            <p class="text-gray-500 text-sm mt-2">Building connections that matter 🌍</p>
+                        </div>
+                        <div class="mt-6 grid grid-cols-3 text-center border-t pt-4">
+                            <div>
+                                <div class="font-bold text-lg" id="userPosts">0</div>
+                                <div class="text-gray-500 text-sm">Posts</div>
+                            </div>
+                            <div>
+                                <div class="font-bold text-lg" id="userFollowers">0</div>
+                                <div class="text-gray-500 text-sm">Followers</div>
+                            </div>
+                            <div>
+                                <div class="font-bold text-lg" id="userFollowing">0</div>
+                                <div class="text-gray-500 text-sm">Following</div>
+                            </div>
+                        </div>
+                        <button onclick="showProfile(currentUser.id)" class="w-full mt-4 bg-indigo-50 text-indigo-600 py-2 rounded-xl font-semibold hover:bg-indigo-100 transition-colors">View Profile</button>
+                    </div>
+                </div>
+
+                <!-- Main Content -->
+                <div class="lg:col-span-2">
+                    <!-- Stories Section -->
+                    <div class="bg-white rounded-2xl border border-gray-200 p-4 mb-6 shadow-sm overflow-hidden">
+                        <div class="flex space-x-4 overflow-x-auto pb-2 scrollbar-hide">
+                            <div class="flex flex-col items-center space-y-1 flex-shrink-0 cursor-pointer" onclick="addStory()">
+                                <div class="story-ring p-1 rounded-full">
+                                    <div class="bg-white rounded-full">
+                                        <img id="currentUserStoryAvatar" src="" alt="Your Story" class="w-14 h-14 rounded-full">
+                                    </div>
+                                </div>
+                                <span class="text-xs text-gray-600">Add Story</span>
+                            </div>
+                            <div id="storiesContainer" class="flex space-x-4">
+                                <!-- Stories will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Create Post -->
+                    <div class="bg-white rounded-2xl border border-gray-200 p-4 mb-6 shadow-sm">
+                        <div class="flex space-x-3">
+                            <img id="createPostAvatar" src="" alt="Your Profile" class="w-10 h-10 rounded-full">
+                            <div class="flex-1">
+                                <textarea placeholder="Share your thoughts..." 
+                                          class="w-full p-3 border-0 resize-none focus:outline-none text-gray-800 placeholder-gray-500"
+                                          rows="2" id="postContent"></textarea>
+                                <div class="flex justify-between items-center mt-2 pt-2 border-t border-gray-100">
+                                    <div class="flex space-x-2">
+                                        <button class="text-indigo-500 hover:bg-indigo-50 p-2 rounded-full transition-colors">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                            </svg>
+                                        </button>
+                                        <button class="text-purple-500 hover:bg-purple-50 p-2 rounded-full transition-colors">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                                            </svg>
+                                        </button>
+                                        <button class="text-green-500 hover:bg-green-50 p-2 rounded-full transition-colors">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <button class="social-gradient text-white px-6 py-2 rounded-full hover:opacity-90 transition-opacity font-medium" id="postBtn">
+                                        Post
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Posts Feed -->
+                    <div id="postsContainer">
+                        <!-- Posts will be dynamically inserted here -->
+                    </div>
+                </div>
+
+                <!-- Right Sidebar -->
+                <div class="lg:col-span-1">
+                    <!-- Suggested Users -->
+                    <div class="bg-white rounded-2xl border border-gray-200 p-6 mb-6 sticky top-24 shadow-sm">
+                        <h3 class="font-bold text-lg mb-4">Who to follow</h3>
+                        <div class="space-y-4" id="suggestedUsers">
+                            <!-- Suggested users will be populated here -->
+                        </div>
+                        <button class="w-full mt-4 text-indigo-600 text-sm font-medium hover:underline">See more suggestions</button>
+                    </div>
+
+                    <!-- Trends -->
+                    <div class="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
+                        <h3 class="font-bold text-lg mb-4">Trending Topics</h3>
+                        <div class="space-y-4">
+                            <div class="flex justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-500">#AIRevolution</p>
+                                    <p class="font-medium">12.4K posts</p>
+                                </div>
+                                <button class="text-indigo-600 hover:underline text-sm">Follow</button>
+                            </div>
+                            <div class="flex justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-500">#TravelGoals</p>
+                                    <p class="font-medium">8.7K posts</p>
+                                </div>
+                                <button class="text-indigo-600 hover:underline text-sm">Follow</button>
+                            </div>
+                            <div class="flex justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-500">#TechNews</p>
+                                    <p class="font-medium">15.2K posts</p>
+                                </div>
+                                <button class="text-indigo-600 hover:underline text-sm">Follow</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="notificationToast" class="fixed bottom-8 right-8 bg-indigo-500 text-white px-6 py-3 rounded-xl shadow-lg hidden notification flex items-center space-x-2">
+        <span id="toastMessage">Action completed!</span>
+    </div>
+
+    <script>
+        // Authentication data
+        let registeredUsers = [
+            { id: 1, fullName: 'IndraRani Varma', username: 'Indra Rani', email: 'indra@demo.com', password: 'password123', avatar: 'SR', color: '#6366f1', bio: 'Tech enthusiast and coffee lover ☕' },
+            { id: 2, fullName: 'Vamshi Krishna', username: 'vamshi_krishna', email: 'vamshi@demo.com', password: 'password123', avatar: 'VK', color: '#ef4444', bio: 'Adventure seeker exploring the world 🌍' },
+            { id: 3, fullName: 'Priya Sharma', username: 'priya_sharma', email: 'priya@demo.com', password: 'password123', avatar: 'PS', color: '#10b981', bio: 'Bookworm and aspiring writer 📖' },
+            { id: 4, fullName: 'Kiran Kumar', username: 'kiran_kumar', email: 'kiran@demo.com', password: 'password123', avatar: 'KK', color: '#f59e0b', bio: 'Fitness freak and health coach 💪' },
+            { id: 5, fullName: 'Anusha Sri', username: 'anusha_sri', email: 'anusha@demo.com', password: 'password123', avatar: 'AS', color: '#8b5cf6', bio: 'Art lover and digital creator 🎨' },
+            { id: 6, fullName: 'Vijay Kumar', username: 'vijay_kumar', email: 'vijay@demo.com', password: 'password123', avatar: 'VK', color: '#ec4899', bio: 'Music producer and DJ 🎧' },
+            { id: 7, fullName: 'Emma Johnson', username: 'emma_johnson', email: 'emma@demo.com', password: 'password123', avatar: 'EJ', color: '#06b6d4', bio: 'Travel blogger sharing tips ✈️' },
+            { id: 8, fullName: 'Michael Chen', username: 'michael_chen', email: 'michael@demo.com', password: 'password123', avatar: 'MC', color: '#84cc16', bio: 'Software engineer and gamer 🕹️' },
+            { id: 9, fullName: 'Sophia Rodriguez', username: 'sophia_rodriguez', email: 'sophia@demo.com', password: 'password123', avatar: 'SR', color: '#f97316', bio: 'Foodie exploring cuisines 🍲' },
+            { id: 10, fullName: 'David Kim', username: 'david_kim', email: 'david@demo.com', password: 'password123', avatar: 'DK', color: '#14b8a6', bio: 'Photography enthusiast 📸' },
+            { id: 11, fullName: 'Olivia Patel', username: 'olivia_patel', email: 'olivia@demo.com', password: 'password123', avatar: 'OP', color: '#a855f7', bio: 'Yoga instructor and wellness coach 🧘‍♀️' },
+            { id: 12, fullName: 'James Wilson', username: 'james_wilson', email: 'james@demo.com', password: 'password123', avatar: 'JW', color: '#3b82f6', bio: 'Entrepreneur building startups 🚀' }
+        ];
+
+        let currentUser = null;
+        let users = [];
+        let posts = [];
+        let postIdCounter = 1;
+        let profileUser = null;
+
+        // Sample users data (expanded)
+        const sampleUsers = [
+            { id: 2, name: 'Vamshi Krishna', handle: '@vamshi_krishna', avatar: 'VK', color: '#ef4444', followers: 245, following: 189, isFollowing: true, bio: 'Adventure seeker exploring the world 🌍' },
+            { id: 3, name: 'Priya Sharma', handle: '@priya_sharma', avatar: 'PS', color: '#10b981', followers: 567, following: 234, isFollowing: false, bio: 'Bookworm and aspiring writer 📖' },
+            { id: 4, name: 'Kiran Kumar', handle: '@kiran_kumar', avatar: 'KK', color: '#f59e0b', followers: 412, following: 167, isFollowing: true, bio: 'Fitness freak and health coach 💪' },
+            { id: 5, name: 'Anusha Sri', handle: '@anusha_sri', avatar: 'AS', color: '#8b5cf6', followers: 789, following: 345, isFollowing: false, bio: 'Art lover and digital creator 🎨' },
+            { id: 6, name: 'Vijay Kumar', handle: '@vijay_kumar', avatar: 'VK', color: '#ec4899', followers: 321, following: 156, isFollowing: false, bio: 'Music producer and DJ 🎧' },
+            { id: 7, name: 'Emma Johnson', handle: '@emma_johnson', avatar: 'EJ', color: '#06b6d4', followers: 890, following: 432, isFollowing: true, bio: 'Travel blogger sharing tips ✈️' },
+            { id: 8, name: 'Michael Chen', handle: '@michael_chen', avatar: 'MC', color: '#84cc16', followers: 654, following: 287, isFollowing: false, bio: 'Software engineer and gamer 🕹️' },
+            { id: 9, name: 'Sophia Rodriguez', handle: '@sophia_rodriguez', avatar: 'SR', color: '#f97316', followers: 543, following: 210, isFollowing: false, bio: 'Foodie exploring cuisines 🍲' },
+            { id: 10, name: 'David Kim', handle: '@david_kim', avatar: 'DK', color: '#14b8a6', followers: 765, following: 321, isFollowing: true, bio: 'Photography enthusiast 📸' },
+            { id: 11, name: 'Olivia Patel', handle: '@olivia_patel', avatar: 'OP', color: '#a855f7', followers: 432, following: 198, isFollowing: false, bio: 'Yoga instructor and wellness coach 🧘‍♀️' },
+            { id: 12, name: 'James Wilson', handle: '@james_wilson', avatar: 'JW', color: '#3b82f6', followers: 987, following: 456, isFollowing: false, bio: 'Entrepreneur building startups 🚀' }
+        ];
+
+        // Sample posts (expanded with more variety)
+        const samplePosts = [
+            { id: 1, userId: 2, content: 'Just hiked up a beautiful mountain! The view was worth every step. 🏞️ #NatureLover', timestamp: '1 hour ago', likes: 89, comments: [], isLiked: false },
+            { id: 2, userId: 3, content: 'Finished "Atomic Habits" - highly recommend for anyone looking to improve their daily routine! 📘 #BookRecommendations', timestamp: '3 hours ago', likes: 156, comments: [], isLiked: true },
+            { id: 3, userId: 4, content: 'New personal best in the gym today! Consistency is key. 💪 #FitnessJourney', timestamp: '5 hours ago', likes: 78, comments: [], isLiked: false },
+            { id: 4, userId: 5, content: 'Created a new digital artwork inspired by ocean waves. 🌊 What do you think? #DigitalArt', timestamp: '7 hours ago', likes: 234, comments: [], isLiked: true },
+            { id: 5, userId: 6, content: 'Dropped a new track! Check it out on SoundCloud. 🎵 #NewMusic', timestamp: '1 day ago', likes: 167, comments: [], isLiked: false },
+            { id: 6, userId: 7, content: 'Travel tip: Always try local street food - it\'s the best! 🍜 #TravelTips', timestamp: '1 day ago', likes: 345, comments: [], isLiked: false },
+            { id: 7, userId: 8, content: 'Just beat the final boss in Elden Ring! What a game. 🎮 #Gaming', timestamp: '2 days ago', likes: 210, comments: [], isLiked: true },
+            { id: 8, userId: 9, content: 'Tried making sushi at home - turned out better than expected! 🍣 #HomeCooking', timestamp: '2 days ago', likes: 189, comments: [], isLiked: false },
+            { id: 9, userId: 10, content: 'Captured this stunning sunset last evening. Golden hour magic! 🌅 #Photography', timestamp: '3 days ago', likes: 456, comments: [], isLiked: true },
+            { id: 10, userId: 11, content: 'Morning yoga session done! Feeling energized for the day. 🧘‍♀️ #Wellness', timestamp: '3 days ago', likes: 123, comments: [], isLiked: false },
+            { id: 11, userId: 12, content: 'Excited to launch my new startup next month! Stay tuned. 🚀 #EntrepreneurLife', timestamp: '4 days ago', likes: 567, comments: [], isLiked: false }
+        ];
+
+        function createAvatar(user) {
+            return `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='20' fill='${encodeURIComponent(user.color)}'/%3E%3Ctext x='20' y='25' text-anchor='middle' fill='white' font-size='16' font-weight='bold'%3E${user.avatar}%3C/text%3E%3C/svg%3E`;
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('notificationToast');
+            const toastMessage = document.getElementById('toastMessage');
+            toastMessage.textContent = message;
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3000);
+        }
+
+        // Authentication functions
+        function login(username, password) {
+            const user = registeredUsers.find(u => 
+                (u.username === username || u.email === username) && u.password === password
+            );
+            
+            if (user) {
+                currentUser = {
+                    id: user.id,
+                    name: user.fullName,
+                    username: user.username,
+                    email: user.email,
+                    handle: '@' + user.username,
+                    avatar: user.avatar,
+                    color: user.color,
+                    bio: user.bio,
+                    posts: 0,
+                    followers: Math.floor(Math.random() * 1000) + 200,
+                    following: Math.floor(Math.random() * 500) + 100
+                };
+                
+                // Initialize app data
+                users = sampleUsers;
+                posts = samplePosts.map(post => ({...post, id: postIdCounter++}));
+                
+                showMainApp();
+                showToast(`Welcome back, ${currentUser.name}! 🎉`);
+                return true;
+            }
+            return false;
+        }
+
+        function signup(fullName, username, email, password) {
+            if (registeredUsers.find(u => u.username === username || u.email === email)) {
+                return false;
+            }
+            
+            const newUser = {
+                id: registeredUsers.length + 1,
+                fullName: fullName,
+                username: username,
+                email: email,
+                password: password,
+                avatar: fullName.split(' ').map(n => n[0]).join('').toUpperCase(),
+                color: '#' + Math.floor(Math.random()*16777215).toString(16),
+                bio: 'New to SocialConnect! Excited to connect.'
+            };
+            
+            registeredUsers.push(newUser);
+            sampleUsers.push({
+                id: newUser.id,
+                name: newUser.fullName,
+                handle: '@' + newUser.username,
+                avatar: newUser.avatar,
+                color: newUser.color,
+                followers: 0,
+                following: 0,
+                isFollowing: false,
+                bio: newUser.bio
+            });
+            return login(username, password);
+        }
+
+        function logout() {
+            currentUser = null;
+            document.getElementById('authScreen').classList.remove('hidden');
+            document.getElementById('mainApp').classList.add('hidden');
+            showToast('Logged out successfully! 👋');
+        }
+
+        function showMainApp() {
+            document.getElementById('authScreen').classList.add('hidden');
+            document.getElementById('mainApp').classList.remove('hidden');
+            
+            const avatarUrl = createAvatar(currentUser);
+            document.getElementById('currentUserAvatar').src = avatarUrl;
+            document.getElementById('currentUserStoryAvatar').src = avatarUrl;
+            document.getElementById('createPostAvatar').src = avatarUrl;
+            document.getElementById('profileCardAvatar').src = avatarUrl;
+            document.getElementById('currentUserName').textContent = currentUser.name;
+            document.getElementById('profileCardName').textContent = currentUser.name;
+            document.getElementById('profileCardHandle').textContent = currentUser.handle;
+            document.getElementById('userPosts').textContent = currentUser.posts;
+            document.getElementById('userFollowers').textContent = currentUser.followers;
+            document.getElementById('userFollowing').textContent = currentUser.following;
+            
+            renderPosts();
+            renderSuggestedUsers();
+            renderStories();
+        }
+
+        function showProfile(userId) {
+            const user = userId === currentUser.id ? currentUser : users.find(u => u.id === userId);
+            if (!user) return;
+            
+            profileUser = user;
+            const avatarUrl = createAvatar(user);
+            
+            document.getElementById('profileAvatar').src = avatarUrl;
+            document.getElementById('profileName').textContent = user.name;
+            document.getElementById('profileHandle').textContent = user.handle;
+            document.getElementById('profileBio').textContent = user.bio || 'No bio yet.';
+            document.getElementById('profilePosts').textContent = posts.filter(p => p.userId === userId).length;
+            document.getElementById('profileFollowers').textContent = user.followers;
+            document.getElementById('profileFollowing').textContent = user.following;
+            
+            const followBtn = document.getElementById('profileFollowBtn');
+            if (userId !== currentUser.id) {
+                followBtn.classList.remove('hidden');
+                followBtn.textContent = user.isFollowing ? 'Following' : 'Follow';
+                followBtn.onclick = () => toggleFollow(userId);
+                followBtn.className = user.isFollowing ? 
+                    'px-6 py-3 bg-gray-200 text-gray-700 rounded-xl font-semibold hover:bg-gray-300 transition-colors' :
+                    'px-6 py-3 social-gradient text-white rounded-xl font-semibold hover:opacity-90 transition-opacity';
+            } else {
+                followBtn.classList.add('hidden');
+            }
+            
+            renderProfilePosts(userId);
+            document.getElementById('profileModal').classList.remove('hidden');
+        }
+
+        function closeProfile() {
+            document.getElementById('profileModal').classList.add('hidden');
+        }
+
+        function renderProfilePosts(userId) {
+            const container = document.getElementById('profilePostsContainer');
+            const userPosts = posts.filter(p => p.userId === userId);
+            container.innerHTML = userPosts.map(post => `
+                <div class="bg-gray-50 rounded-xl p-4 cursor-pointer hover:shadow-md transition-shadow" onclick="closeProfile(); document.querySelector('[data-post-id=\\\'${post.id}\\\']').scrollIntoView({behavior: 'smooth'});">
+                    <p class="text-gray-800 line-clamp-3">${post.content}</p>
+                    <p class="text-gray-500 text-sm mt-2">${post.timestamp}</p>
+                    <div class="flex items-center space-x-4 mt-2 text-sm text-gray-600">
+                        <span>${post.likes} likes</span>
+                        <span>${post.comments.length} comments</span>
+                    </div>
+                </div>
+            `).join('');
+            if (userPosts.length === 0) {
+                container.innerHTML = '<p class="text-center text-gray-500 col-span-3">No posts yet.</p>';
+            }
+        }
+
+        function toggleLike(postId) {
+            const post = posts.find(p => p.id === postId);
+            if (post) {
+                post.isLiked = !post.isLiked;
+                post.likes += post.isLiked ? 1 : -1;
+                
+                const likeBtn = document.querySelector(`[data-post-id="${postId}"] .like-btn`);
+                const likeCount = document.querySelector(`[data-post-id="${postId}"] .like-count`);
+                
+                likeBtn.classList.toggle('liked', post.isLiked);
+                likeBtn.innerHTML = post.isLiked ? 
+                    '<svg class="w-6 h-6 text-red-500 fill-current" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>' :
+                    '<svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>';
+                
+                likeCount.textContent = post.likes;
+                
+                showToast(post.isLiked ? 'Liked the post! ❤️' : 'Unliked the post');
+            }
+        }
+
+        function toggleFollow(userId) {
+            const user = users.find(u => u.id === userId);
+            if (user) {
+                user.isFollowing = !user.isFollowing;
+                user.followers += user.isFollowing ? 1 : -1;
+                currentUser.following += user.isFollowing ? 1 : -1;
+                
+                document.getElementById('userFollowing').textContent = currentUser.following;
+                
+                const followBtn = document.querySelector(`[data-user-id="${userId}"] .follow-btn`);
+                if (followBtn) {
+                    followBtn.textContent = user.isFollowing ? 'Following' : 'Follow';
+                    followBtn.className = user.isFollowing ? 
+                        'follow-btn px-4 py-1.5 text-sm bg-gray-200 text-gray-700 rounded-full hover:bg-gray-300 transition-colors' :
+                        'follow-btn px-4 py-1.5 text-sm social-gradient text-white rounded-full hover:opacity-90 transition-opacity';
+                }
+                
+                showToast(user.isFollowing ? `Following ${user.name}! 👥` : `Unfollowed ${user.name}`);
+                renderSuggestedUsers();
+                if (profileUser && profileUser.id === userId) {
+                    showProfile(userId);
+                }
+            }
+        }
+
+        function addComment(postId) {
+            const commentInput = document.querySelector(`[data-post-id="${postId}"] .comment-input`);
+            const commentText = commentInput.value.trim();
+            
+            if (commentText) {
+                const post = posts.find(p => p.id === postId);
+                if (post) {
+                    post.comments.push({
+                        id: Date.now(),
+                        userId: currentUser.id,
+                        userName: currentUser.name,
+                        content: commentText,
+                        timestamp: 'Just now'
+                    });
+                    
+                    commentInput.value = '';
+                    renderPosts();
+                    showToast('Comment posted! 💬');
+                }
+            }
+        }
+
+        function createPost() {
+            const content = document.getElementById('postContent').value.trim();
+            if (content) {
+                const newPost = {
+                    id: postIdCounter++,
+                    userId: currentUser.id,
+                    content: content,
+                    timestamp: 'Just now',
+                    likes: 0,
+                    comments: [],
+                    isLiked: false
+                };
+                
+                posts.unshift(newPost);
+                currentUser.posts++;
+                document.getElementById('userPosts').textContent = currentUser.posts;
+                document.getElementById('postContent').value = '';
+                
+                renderPosts();
+                showToast('Post created! 📝');
+            } else {
+                showToast('Post content cannot be empty!');
+            }
+        }
+
+        function addStory() {
+            showToast('Story added! 📸 (Demo feature)');
+        }
+
+        function renderStories() {
+            const container = document.getElementById('storiesContainer');
+            const storyUsers = users.slice(0, 8); // More stories for realism
+            
+            container.innerHTML = storyUsers.map(user => `
+                <div class="flex flex-col items-center space-y-1 flex-shrink-0 cursor-pointer">
+                    <div class="story-ring p-1 rounded-full">
+                        <div class="bg-white rounded-full">
+                            <img src="${createAvatar(user)}" alt="${user.name}" class="w-14 h-14 rounded-full">
+                        </div>
+                    </div>
+                    <span class="text-xs text-gray-600 max-w-[60px] truncate">${user.name.split(' ')[0]}</span>
+                </div>
+            `).join('');
+        }
+
+        function renderPosts() {
+            const container = document.getElementById('postsContainer');
+            container.innerHTML = posts.map(post => {
+                const user = post.userId === currentUser.id ? currentUser : users.find(u => u.id === post.userId);
+                const avatar = createAvatar(user);
+                
+                return `
+                    <div class="bg-white rounded-2xl border border-gray-200 mb-6 shadow-sm overflow-hidden" data-post-id="${post.id}">
+                        <!-- Post Header -->
+                        <div class="flex items-center justify-between p-4">
+                            <div class="flex items-center space-x-3 cursor-pointer" onclick="showProfile(${post.userId})">
+                                <img src="${avatar}" alt="${user.name}" class="w-10 h-10 rounded-full">
+                                <div>
+                                    <h4 class="font-semibold text-sm hover:text-indigo-600 transition-colors">${user.name}</h4>
+                                    <p class="text-gray-500 text-xs">${post.timestamp}</p>
+                                </div>
+                            </div>
+                            <button class="p-2 hover:bg-gray-100 rounded-full text-gray-600">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+                                </svg>
+                            </button>
+                        </div>
+                        
+                        <!-- Post Content -->
+                        <div class="px-4 pb-4">
+                            <p class="text-gray-800 leading-relaxed whitespace-pre-wrap">${post.content}</p>
+                        </div>
+                        
+                        <!-- Post Actions -->
+                        <div class="px-4 py-3 border-t border-gray-100">
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="flex items-center space-x-4">
+                                    <button class="like-btn flex items-center space-x-2 hover:bg-gray-50 p-2 rounded-full transition-colors ${post.isLiked ? 'liked' : ''}" onclick="toggleLike(${post.id})">
+                                        ${post.isLiked ? 
+                                            '<svg class="w-6 h-6 text-red-500 fill-current" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>' :
+                                            '<svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>'
+                                        }
+                                    </button>
+                                    <button class="flex items-center space-x-2 hover:bg-gray-50 p-2 rounded-full transition-colors" onclick="document.querySelector('[data-post-id=\\'${post.id}\\'] .comment-input').focus()">
+                                        <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                                        </svg>
+                                    </button>
+                                    <button class="flex items-center space-x-2 hover:bg-gray-50 p-2 rounded-full transition-colors">
+                                        <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                                <button class="hover:bg-gray-50 p-2 rounded-full transition-colors text-gray-600">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                            
+                            <div class="text-sm font-medium text-gray-700 mb-3">
+                                <span class="like-count">${post.likes}</span> likes
+                            </div>
+                            
+                            ${post.comments.length > 0 ? `
+                                <div class="space-y-3 mb-4 border-t pt-3">
+                                    ${post.comments.slice(-3).map(comment => `
+                                        <div class="flex items-start space-x-2">
+                                            <img src="${createAvatar({avatar: comment.userName.split(' ').map(n => n[0]).join(''), color: '#9ca3af'})}" alt="${comment.userName}" class="w-6 h-6 rounded-full">
+                                            <div>
+                                                <span class="font-medium text-sm">${comment.userName}</span>
+                                                <span class="ml-2 text-sm text-gray-600">${comment.content}</span>
+                                                <p class="text-xs text-gray-400 mt-0.5">${comment.timestamp}</p>
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                    ${post.comments.length > 3 ? `<button class="text-gray-500 text-sm hover:underline">View all ${post.comments.length} comments</button>` : ''}
+                                </div>
+                            ` : '<p class="text-sm text-gray-500 mb-3">No comments yet.</p>'}
+                            
+                            <div class="flex items-center space-x-3 pt-2 border-t">
+                                <img src="${createAvatar(currentUser)}" alt="Your Profile" class="w-8 h-8 rounded-full">
+                                <input type="text" placeholder="Write a comment..." 
+                                       class="comment-input flex-1 text-sm bg-gray-50 px-4 py-2 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                                       onkeypress="if(event.key==='Enter') addComment(${post.id})">
+                                <button onclick="addComment(${post.id})" class="text-indigo-600 text-sm font-medium hover:underline">Post</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderSuggestedUsers() {
+            const container = document.getElementById('suggestedUsers');
+            const suggested = users.filter(user => user.id !== currentUser.id && !user.isFollowing).slice(0, 5);
+            
+            container.innerHTML = suggested.map(user => `
+                <div class="flex items-center justify-between" data-user-id="${user.id}">
+                    <div class="flex items-center space-x-3 cursor-pointer" onclick="showProfile(${user.id})">
+                        <img src="${createAvatar(user)}" alt="${user.name}" class="w-10 h-10 rounded-full">
+                        <div>
+                            <h4 class="font-medium text-sm hover:text-indigo-600 transition-colors">${user.name}</h4>
+                            <p class="text-gray-500 text-xs">${user.handle}</p>
+                        </div>
+                    </div>
+                    <button onclick="toggleFollow(${user.id})" 
+                            class="follow-btn px-4 py-1.5 text-sm ${user.isFollowing ? 'bg-gray-200 text-gray-700' : 'social-gradient text-white'} rounded-full hover:opacity-90 transition-opacity">
+                        ${user.isFollowing ? 'Following' : 'Follow'}
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        // Event listeners
+        document.getElementById('loginFormElement').addEventListener('submit', e => {
+            e.preventDefault();
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+            if (!login(username, password)) {
+                showToast('Invalid username or password. Try again!');
+            }
+        });
+
+        document.getElementById('signupFormElement').addEventListener('submit', e => {
+            e.preventDefault();
+            const fullName = document.getElementById('signupFullName').value;
+            const username = document.getElementById('signupUsername').value;
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+            
+            if (signup(fullName, username, email, password)) {
+                showToast('Account created successfully! 🎉');
+            } else {
+                showToast('Username or email already taken!');
+            }
+        });
+
+        document.getElementById('showSignup').addEventListener('click', () => {
+            document.getElementById('loginForm').classList.add('hidden');
+            document.getElementById('signupForm').classList.remove('hidden');
+        });
+
+        document.getElementById('showLogin').addEventListener('click', () => {
+            document.getElementById('signupForm').classList.add('hidden');
+            document.getElementById('loginForm').classList.remove('hidden');
+        });
+
+        document.getElementById('postBtn').addEventListener('click', createPost);
+
+        document.getElementById('postContent').addEventListener('keypress', e => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                createPost();
+            }
+        });
+
+        document.getElementById('searchInput').addEventListener('keypress', e => {
+            if (e.key === 'Enter') {
+                const searchTerm = e.target.value.toLowerCase();
+                if (searchTerm) {
+                    const results = users.filter(user => 
+                        user.name.toLowerCase().includes(searchTerm) || 
+                        user.handle.toLowerCase().includes(searchTerm)
+                    );
+                    if (results.length > 0) {
+                        showProfile(results[0].id);
+                        showToast(`Showing profile for ${results[0].name}`);
+                    } else {
+                        showToast('No matching users found');
+                    }
+                }
+            }
+        });
+
+        document.getElementById('notificationBtn').addEventListener('click', () => {
+            showToast('You have new notifications! 🔔 Check them out.');
+        });
+    </script>
+</body>
+</html>
+
